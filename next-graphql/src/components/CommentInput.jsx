@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 
 export const ADDMUT = gql`
@@ -9,11 +9,27 @@ export const ADDMUT = gql`
   }
 `;
 
-const CommentInput = () => {
+const CommentInput = ({ isChanged, setIsChanged }) => {
   const [comment, setComment] = useState("");
   const [createComment] = useMutation(ADDMUT);
+  const [commentArr, setCommentArr] = useState([]);
+
+  useEffect(() => {
+    localStorage.removeItem("comment");
+    setCommentArr([]);
+  }, []);
+
+  const storeInLocalStorage = (comments) => {
+    const commentData = { comments: comments };
+    localStorage.setItem("comment", JSON.stringify(commentData));
+  };
 
   const addComment = async () => {
+    if (!comment.trim()) return;
+    const newComment = { id: Date.now(), comment: comment };
+    setCommentArr([...commentArr, newComment]);
+    storeInLocalStorage([...commentArr, newComment]);
+
     await createComment({
       variables: {
         data: {
@@ -22,8 +38,8 @@ const CommentInput = () => {
       },
     })
       .then(({ data }) => {
-        console.log("Comment added successfully:", data?.createComment?.Review);
         setComment("");
+        setIsChanged(!isChanged);
       })
       .catch((error) => {
         console.error("Error adding comment:", error);
@@ -43,16 +59,18 @@ const CommentInput = () => {
         }}
         onKeyDown={(e) => {
           if (e.code === "Enter") {
+            e.preventDefault();
             addComment();
           }
         }}
       />
-      <input
-        className="px-6 py-4 rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition"
+      <button
+        className="px-6 py-4 rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition flex-none"
         type="button"
-        value="Add comment"
         onClick={addComment}
-      />
+      >
+        Add comment
+      </button>
     </div>
   );
 };
