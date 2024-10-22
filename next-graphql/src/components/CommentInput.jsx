@@ -27,7 +27,7 @@ const CommentInput = ({ isChanged, setIsChanged }) => {
   const addComment = async () => {
     if (!comment.trim()) return;
     const newComment = { id: Date.now(), comment: comment };
-    setCommentArr([...commentArr, newComment]);
+    setCommentArr(prevState => [...prevState, newComment]);
     storeInLocalStorage([...commentArr, newComment]);
 
     await createComment({
@@ -54,9 +54,7 @@ const CommentInput = ({ isChanged, setIsChanged }) => {
         placeholder="Add new comment here..."
         id="commentText"
         value={comment}
-        onChange={(e) => {
-          setComment(e.target.value);
-        }}
+        onChange={(e) => setComment(e.target.value)}
         onKeyDown={(e) => {
           if (e.code === "Enter") {
             e.preventDefault();

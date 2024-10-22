@@ -28,7 +28,14 @@ const Demo = ({ isChanged }) => {
       </div>
     );
 
-  if (error) return <p>Error :{error.message}</p>;
+  if (error)
+    return (
+      <div className="text-center py-4">
+        <div className="flex items-center justify-center rounded-xl border border-slate-400/50 p-6 py-14">
+          Error :{error.message}
+        </div>
+      </div>
+    );
 
   return (
     <div className="text-center py-4">
@@ -45,13 +52,11 @@ const Demo = ({ isChanged }) => {
         ))}
         {storedComments?.comments &&
           storedComments?.comments.length > 0 &&
-          storedComments?.comments.map((val) => {
-            return (
-              <div key={val.id} className={`border-t border-slate-200 py-4`}>
-                {val.comment}
-              </div>
-            );
-          })}
+          storedComments?.comments.map((val) => (
+            <div key={val.id} className={`border-t border-slate-200 py-4`}>
+              {val.comment}
+            </div>
+          ))}
       </div>
     </div>
   );
